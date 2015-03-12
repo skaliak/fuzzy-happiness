@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.skaliak.tutorialapp" >
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+    <uses-permission android:name="android.permission.USE_CREDENTIALS" />
+
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:theme="@style/AppTheme" >
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
+
+        <activity
+            android:name=".MyActivity"
+            android:label="@string/app_name" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".DisplayMessageActivity"
+            android:label="@string/title_activity_display_message"
+            android:parentActivityName=".MyActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.skaliak.tutorialapp.MyActivity" />
+        </activity>
+        <activity
+            android:name=".FragActivityFirst"
+            android:label="@string/title_activity_frag_activity_first" >
+        </activity>
+        <activity
+            android:name=".PlanStep1"
+            android:exported="true"
+            android:label="@string/title_activity_plan_step1" >
+        </activity>
+        <activity
+            android:name=".PlanStep2"
+            android:exported="true"
+            android:label="@string/title_activity_plan_step2" >
+        </activity>
+        <activity
+            android:name=".PlanStep3"
+            android:exported="true"
+            android:label="@string/title_activity_plan_step3" >
+        </activity>
+        <activity
+            android:name=".MonDetailView"
+            android:label="@string/title_activity_mon_detail_view" >
+        </activity>
+        <activity
+            android:name=".PlanStep3b"
+            android:exported="true"
+            android:label="@string/title_activity_plan_step3b" >
+        </activity>
+        <activity
+            android:name=".OauthTest"
+            android:exported="true"
+            android:label="@string/title_activity_oauth_test" >
+        </activity>
+        <activity
+            android:name=".NewMonster"
+            android:exported="true"
+            android:label="@string/title_activity_new_monster" >
+        </activity>
+    </application>
+
+</manifest>
