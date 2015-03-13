@@ -16,7 +16,7 @@ import com.skaliak.MonSightingClient;
 import java.util.List;
 import java.util.Vector;
 
-
+//TODO delete this activity
 public class PlanStep2 extends ListActivity {
 
     @Override

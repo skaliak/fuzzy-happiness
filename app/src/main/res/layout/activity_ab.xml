@@ -14,12 +14,13 @@
         android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_weight="0.90" />
 
-    <Button
-        android:layout_width="wrap_content"
+    <TextView
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="New Button"
-        android:id="@+id/button"
-        android:onClick="addMarker"
-        android:layout_gravity="center_horizontal" />
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Tap the plus to add a new sighting in the current map center"
+        android:id="@+id/textView"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="20px" />
 
 </LinearLayout>

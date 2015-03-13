@@ -18,6 +18,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.skaliak.MonSightingClient;
 import com.skaliak.MonSightingClient.*;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Random;
 
@@ -26,11 +27,13 @@ public class MapsActivity extends ActionBarActivity {
     private GoogleMap mMap; // Might be null if Google Play services APK is not available.
     private Monster currentMonster;
     private List<Sighting> sightings;
+    private MonSpottingApi client;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ab);
+        client = MonSightingClient.GetClient(false);
 
         currentMonster = DataSinglet.getInstance().getSelected();
         if (currentMonster == null)
@@ -65,17 +68,27 @@ public class MapsActivity extends ActionBarActivity {
             return true;
         }
 
-        if (id == R.id.add_marker) {
-            //TODO make this add a new sighting and save it to the server
-            //how to get the center
-            LatLng pos = mMap.getCameraPosition().target;
-
-            //or use a longpress or click event handler
-
+        if (id == R.id.new_sighting) {
+            newSighting();
             return true;
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void newSighting() {
+        //TODO test this
+        //sighting marker is created in current map center (camera target)
+        LatLng pos = mMap.getCameraPosition().target;
+        Date now = new Date();
+        Sighting sighting = new Sighting();
+
+        sighting.lat = pos.latitude;
+        sighting.lng = pos.longitude;
+        sighting.timestamp = now;
+
+        new PostSightingAsync().execute(sighting);
+        addMarker(sighting);
     }
 
     /**
@@ -142,11 +155,21 @@ public class MapsActivity extends ActionBarActivity {
         return loc;
     }
 
+    private class PostSightingAsync extends AsyncTask<Sighting, Void, Void> {
+        @Override
+        protected Void doInBackground(Sighting... s) {
+            //TODO add some error checking here?
+            String key = currentMonster.encoded_key;
+            client.new_sighting(key, s[0]);
+
+            return null;
+        }
+    }
+
     private class GetSightingsAsync extends AsyncTask<String, Void, Void> {
         @Override
         protected Void doInBackground(String... keys) {
 
-            MonSpottingApi client = MonSightingClient.GetClient(false);
             sightings = client.sightings_of_monster(keys[0]);
             Log.d("MapsActivity", "got this many sightings: " + sightings.size());
             return null;

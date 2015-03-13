@@ -113,26 +113,43 @@ public class MonSightingClient {
     }
 
     //TODO put some toast messages here
-    public static class genericCallback implements Callback<Void> {
+    public static class GenericCallback implements Callback<Void> {
 
         private Context context;
 
-        public genericCallback(Context context) {
+        public GenericCallback(Context context) {
             this.context = context;
         }
 
         @Override
         public void success(Void aVoid, Response response) {
+            Log.d("genericcallback", "success");
             Toast toast = Toast.makeText(context, "operation succeeded", Toast.LENGTH_LONG);
-            toast.setGravity(Gravity.TOP, 0, 0);
+            //toast.setGravity(Gravity.TOP, 0, 0);
             toast.show();
+            postSuccess();
         }
 
         @Override
         public void failure(RetrofitError error) {
+            Log.d("genericcallback", "fail");
             Toast toast = Toast.makeText(context, error.getMessage(), Toast.LENGTH_LONG);
-            toast.setGravity(Gravity.TOP, 0, 0);
+            //toast.setGravity(Gravity.TOP, 0, 0);
             toast.show();
+        }
+
+        protected void postSuccess() {}
+    }
+
+    public static class DelMonCallback extends GenericCallback {
+        public DelMonCallback(Context context) {
+            super(context);
+        }
+
+        @Override
+        protected void postSuccess() {
+            //delete monster from list
+            DataSinglet.getInstance().removeSelected();
         }
     }
 
@@ -143,7 +160,7 @@ public class MonSightingClient {
         RequestInterceptor requestInterceptor = new RequestInterceptor() {
             @Override
             public void intercept(RequestInterceptor.RequestFacade request) {
-                Log.d("api client", "request interceptor");
+                //Log.d("api client", "request interceptor");
                 DataSinglet ds = DataSinglet.getInstance();
                 if (ds.isLoggedIn()) {
                     Log.d("api client", "interceptor says logged in");

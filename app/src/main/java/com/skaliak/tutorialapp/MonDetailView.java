@@ -1,6 +1,9 @@
 package com.skaliak.tutorialapp;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -8,21 +11,29 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.koushikdutta.ion.Ion;
 import com.skaliak.MonSightingClient;
+import com.skaliak.MonSightingClient.*;
 
 import java.net.URL;
 
 
 public class MonDetailView extends ActionBarActivity {
 
+    private MonSpottingApi client;
+    private Monster currentMon;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        client = MonSightingClient.GetClient(false);
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_mon_detail_view);
 
-        MonSightingClient.Monster m = DataSinglet.getInstance().getSelected();
+        currentMon = DataSinglet.getInstance().getSelected();
+        MonSightingClient.Monster m = currentMon;
 
         String name = m.name;
         String desc = m.description;
@@ -72,16 +83,34 @@ public class MonDetailView extends ActionBarActivity {
                 viewSightings();
                 return false;
             case R.id.del_mon:
-                deleteMonster();
+                deleteMonsterWithConf();
                 return false;
         }
         return super.onOptionsItemSelected(item);
     }
 
     private void deleteMonster() {
-        //TODO start background activity to delete monster
-        //remove monster from local list
-        //then show toast message and navigate UP
+        //make async call to delete monster
+        //remove monster from local list (done by callback)
+        //then show toast message
+        //then navigate UP
+        Log.d("mondetailview", "attempting to delete monster async");
+        GenericCallback cb = new DelMonCallback(this);
+        String key = currentMon.encoded_key;
+        client.delete_monster_async(key, cb);
+
+        //will this work??
+        NavUtils.navigateUpFromSameTask(this);
+    }
+
+    public void deleteMonsterWithConf() {
+        new AlertDialog.Builder(this)
+                .setMessage("Delete this Monster?")
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        deleteMonster();
+                    }})
+                .setNegativeButton(android.R.string.no, null).show();
     }
 
     public void editMonster() {

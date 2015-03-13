@@ -14,7 +14,7 @@ import android.view.ViewGroup;
 import android.os.Build;
 import android.widget.TextView;
 
-
+//TODO delete this activity
 public class FragActivityFirst extends FragmentActivity {
 
     @Override

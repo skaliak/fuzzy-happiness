@@ -13,7 +13,7 @@ import com.skaliak.MonSightingClient.*;
 
 import java.util.List;
 
-
+//TODO delete this activity
 public class PlanStep1 extends ActionBarActivity {
 
     @Override

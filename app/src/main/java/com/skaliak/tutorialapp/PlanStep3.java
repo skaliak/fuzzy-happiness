@@ -30,13 +30,33 @@ public class PlanStep3 extends ListActivity {
         super.onCreate(savedInstanceState);
         Log.d("***** ps3", "in onCreate, before executing async task..");
 
-        new getMonAsync().execute(this);
+        DataSinglet data = DataSinglet.getInstance();
+        if (data.hasList()) {
+            Log.d("***** ps3", "using existing list from datasinglet");
+            monsterList = data.getMonsterList();
+            MonArrayAdapter adapter = new MonArrayAdapter(this, monsterList);
+            setListAdapter(adapter);
+            data.setSubscriber(adapter);
+        }
+        else new getMonAsync().execute(this);
+
+    }
+
+    //TODO this can probably be removed
+    @Override
+    protected void onResume() {
+        Log.d("planstep3", "onresume");
+        super.onResume();
+        DataSinglet data = DataSinglet.getInstance();
+        if (data.wasListChanged()) {
+            MonArrayAdapter a = (MonArrayAdapter) getListAdapter();
+            Log.d("planstep3", "list has this many monsters on resume: " + a.monsters.size());
+        }
     }
 
     @Override
     protected void onListItemClick(ListView l, View v, int position, long id) {
         //super.onListItemClick(l, v, position, id);
-
         DataSinglet.getInstance().select(position);
         Intent intent = new Intent(this, MonDetailView.class);
 
@@ -49,17 +69,20 @@ public class PlanStep3 extends ListActivity {
 
         protected List<Monster> doInBackground(Context... c) {
             theContext = c[0];
-
             MonSightingClient.MonSpottingApi client = MonSightingClient.GetClient(false);
             return client.monsters();
-
         }
 
         protected void onPostExecute(List<Monster> monList) {
             Log.d("***** ps3", "in postExecute handler");
             monsterList = monList;
-            DataSinglet.getInstance().setMonsterList(monsterList);
-            setListAdapter(new MonArrayAdapter(this.theContext, monList));
+            Log.d("planstep3", "list has this many monsters: " + monList.size());
+            DataSinglet data = DataSinglet.getInstance();
+            data.setMonsterList(monsterList);
+
+            MonArrayAdapter adapter = new MonArrayAdapter(this.theContext, monsterList);
+            setListAdapter(adapter);
+            data.setSubscriber(adapter);
         }
     }
 
@@ -70,10 +93,9 @@ public class PlanStep3 extends ListActivity {
 
         public MonArrayAdapter(Context context, List<Monster> monsters) {
             super(context, R.layout.activity_plan_step3, monsters);
-
             this.context = context;
             this.monsters = monsters;
-
+            //setNotifyOnChange(true);
         }
 
         @Override
@@ -86,7 +108,7 @@ public class PlanStep3 extends ListActivity {
             TextView tv = (TextView) monView.findViewById(R.id.mon_name);
             ImageView img = (ImageView) monView.findViewById(R.id.mon_icon);
 
-            //do something with the image here...
+            //TODO use actual image in listview instead of generic icon?
             img.setImageResource(R.drawable.mmm_icon);
 
             tv.setText(monsters.get(position).name);
