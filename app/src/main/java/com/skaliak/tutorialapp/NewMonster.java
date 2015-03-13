@@ -85,7 +85,7 @@ public class NewMonster extends ActionBarActivity {
         protected void onPostExecute(Monster m) {
             Log.d("newmonster", "onpostexecute");
 
-            //TODO how to make this more noticible, or hide the kbd automatically?
+            //TODO (low) how to make this more noticible, or hide the kbd automatically?
             Toast.makeText(getApplicationContext(), "saved", Toast.LENGTH_LONG).show();
         }
     }

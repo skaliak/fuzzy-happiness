@@ -1,13 +1,20 @@
 package com.skaliak;
 
+import android.content.Context;
+import android.content.ContextWrapper;
+import android.content.pm.LauncherApps;
 import android.util.Log;
+import android.view.Gravity;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.skaliak.tutorialapp.DataSinglet;
 
+import retrofit.Callback;
 import retrofit.RequestInterceptor;
 import retrofit.RestAdapter;
+import retrofit.RetrofitError;
 import retrofit.client.Response;
 import retrofit.http.*;
 import retrofit.converter.GsonConverter;
@@ -83,6 +90,7 @@ public class MonSightingClient {
         @POST("/Monsters/{id}/Sightings/")
         Sighting new_sighting(@Path("id") String id, @Body Sighting s);
 
+        //TODO implement async versions of these:
         //update monster
         @PUT("/Monsters/{id}")
         Response update_monster(@Path("id") String id, @Body Monster m);
@@ -91,10 +99,41 @@ public class MonSightingClient {
         @DELETE("/Monsters/{id}")
         Response delete_monster(@Path("id") String id);
 
+        //delete monster
+        @DELETE("/Monsters/{id}")
+        void delete_monster_async(@Path("id") String id, Callback<Void> cb);
+
         //delete sighting
         //does the api support this?
         @DELETE("/Sightings/{id}")
         Response delete_sighting(@Path("id") String id);
+
+        @DELETE("/Sightings/{id}")
+        void delete_sighting(@Path("id") String id, Callback<Void> cb);
+    }
+
+    //TODO put some toast messages here
+    public static class genericCallback implements Callback<Void> {
+
+        private Context context;
+
+        public genericCallback(Context context) {
+            this.context = context;
+        }
+
+        @Override
+        public void success(Void aVoid, Response response) {
+            Toast toast = Toast.makeText(context, "operation succeeded", Toast.LENGTH_LONG);
+            toast.setGravity(Gravity.TOP, 0, 0);
+            toast.show();
+        }
+
+        @Override
+        public void failure(RetrofitError error) {
+            Toast toast = Toast.makeText(context, error.getMessage(), Toast.LENGTH_LONG);
+            toast.setGravity(Gravity.TOP, 0, 0);
+            toast.show();
+        }
     }
 
     public static MonSpottingApi GetClient(boolean dbg)

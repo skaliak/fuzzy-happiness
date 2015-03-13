@@ -20,6 +20,7 @@ import com.skaliak.MonSightingClient.*;
 import java.util.List;
 
 //TODO everything in here should be moved into an actionbar activity with a listview (like 3b)
+//or just convert this to an actionbaractivity...
 public class PlanStep3 extends ListActivity {
 
     private List<Monster> monsterList;
@@ -39,10 +40,6 @@ public class PlanStep3 extends ListActivity {
         DataSinglet.getInstance().select(position);
         Intent intent = new Intent(this, MonDetailView.class);
 
-//        Monster currentMon = monsterList.get(position);
-//        intent.putExtra("mon_name", currentMon.name);
-//        intent.putExtra("mon_desc", currentMon.description);
-//        intent.putExtra("mon_img_url", currentMon.image_url);
         startActivity(intent);
     }
 

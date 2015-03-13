@@ -109,14 +109,14 @@ public class OauthTest extends ActionBarActivity {
                     onGetAuthToken(bundle);
                 }
             } catch (OperationCanceledException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
+                Log.d("oauthtest", "op cancelled exception " + e.getMessage());
             } catch (AuthenticatorException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
+                Log.d("oauthtest", "auth exception " + e.getMessage());
             } catch (IOException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
+                Log.d("oauthtest", "IO exception " + e.getMessage());
             }
         }
     }
@@ -172,11 +172,9 @@ public class OauthTest extends ActionBarActivity {
                     }
                 }
             } catch (ClientProtocolException e) {
-                // TODO Auto-generated catch block
                 Log.d("oauthtest", "client Protocol exception " + e.getMessage());
                 e.printStackTrace();
             } catch (IOException e) {
-                // TODO Auto-generated catch block
                 Log.d("oauthtest", "IO exception " + e.getMessage());
                 e.printStackTrace();
             } finally {

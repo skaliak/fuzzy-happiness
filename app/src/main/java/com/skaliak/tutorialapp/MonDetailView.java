@@ -24,10 +24,6 @@ public class MonDetailView extends ActionBarActivity {
 
         MonSightingClient.Monster m = DataSinglet.getInstance().getSelected();
 
-//        Intent intent = getIntent();
-//        String name = intent.getStringExtra("mon_name");
-//        String desc = intent.getStringExtra("mon_desc");
-//        String url = intent.getStringExtra("mon_img_url");
         String name = m.name;
         String desc = m.description;
         String url = m.image_url;
@@ -41,7 +37,7 @@ public class MonDetailView extends ActionBarActivity {
         tv_desc.setText(desc);
         tv_name.setText(name);
 
-        if(! created_by.isEmpty())
+        if(created_by != null && !created_by.isEmpty())
             tv_cb.setText("created by " +created_by);
 
         //this actually works!  use a different placeholder though...
@@ -66,23 +62,26 @@ public class MonDetailView extends ActionBarActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        switch (id) {
+            case R.id.action_settings:
+                return true;
+            case R.id.edit_mon:
+                editMonster();
+                return false;
+            case R.id.view_sightings:
+                viewSightings();
+                return false;
+            case R.id.del_mon:
+                deleteMonster();
+                return false;
         }
-
-        if (id == R.id.edit_mon) {
-            editMonster();
-            return false;
-        }
-
-        if (id == R.id.view_sightings) {
-            viewSightings();
-            //not sure about these return statements...
-            return false;
-        }
-
         return super.onOptionsItemSelected(item);
+    }
+
+    private void deleteMonster() {
+        //TODO start background activity to delete monster
+        //remove monster from local list
+        //then show toast message and navigate UP
     }
 
     public void editMonster() {
@@ -92,7 +91,9 @@ public class MonDetailView extends ActionBarActivity {
     }
 
     public void viewSightings() {
-        //TODO start new activity to view sightings on a map
+        //start new activity to view sightings on a map
         Log.d("mondetailview", "sightings clicked");
+        Intent intent = new Intent(this, MapsActivity.class);
+        startActivity(intent);
     }
 }

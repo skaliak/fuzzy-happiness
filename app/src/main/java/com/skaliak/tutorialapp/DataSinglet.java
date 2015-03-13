@@ -1,5 +1,7 @@
 package com.skaliak.tutorialapp;
 
+import android.util.Log;
+
 import com.skaliak.MonSightingClient.*;
 import java.util.List;
 
@@ -56,9 +58,10 @@ public class DataSinglet {
 
     public Monster getSelected() {
         Monster m;
-        if (monsterList.size() > 0) {
+        if (monsterList != null && monsterList.size() > 0) {
             m = monsterList.get(selected);
         } else {
+            Log.d("DataSinglet", "getselected creating new empty Monster (monsterlist was null or empty?)");
             m = new Monster();
         }
 

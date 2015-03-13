@@ -1,5 +1,6 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:padding="20dp"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content">
 
@@ -7,10 +8,11 @@
         android:id="@+id/mon_icon"
         android:layout_width="30dp"
         android:layout_height="30dp"
-        android:src="@drawable/abc_spinner_mtrl_am_alpha"/>
+        android:src="@android:drawable/sym_def_app_icon"/>
 
     <TextView android:id="@+id/mon_name"
         android:text="@string/hello_world" android:layout_width="wrap_content"
+        android:paddingLeft="20dp"
         android:textSize="20sp"
         android:layout_height="wrap_content" />
 
