@@ -20,6 +20,8 @@ public class MyActivity extends ActionBarActivity {
         String message = editText.getText().toString();
         intent.putExtra(EXTRA_MESSAGE, message);
         startActivity(intent);
+        //intent.setAction(Intent.ACTION_EDIT);
+
     }
 
     @Override

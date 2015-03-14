@@ -4,4 +4,14 @@
     tools:context="com.skaliak.tutorialapp.PlanStep3b">
     <item android:id="@+id/action_settings" android:title="@string/action_settings"
         android:orderInCategory="100" app:showAsAction="never" />
+
+    <item android:id="@+id/new_monster"
+        android:icon="@android:drawable/ic_input_add"
+        android:title="new"
+        app:showAsAction="ifRoom" />
+
+    <item android:id="@+id/switch_acct"
+        android:title="switch account"
+        android:icon="@drawable/ic_menu_login"
+        app:showAsAction="ifRoom" />
 </menu>

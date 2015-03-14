@@ -5,61 +5,112 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.app.NavUtils;
+import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.skaliak.MonSightingClient;
 import com.skaliak.MonSightingClient.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
-//TODO everything in here should be moved into an actionbar activity with a listview (like 3b)
-//or just convert this to an actionbaractivity...
-public class PlanStep3 extends ListActivity {
+
+
+public class PlanStep3 extends ActionBarActivity {
+//public class PlanStep3 extends ListActivity {  //
 
     private List<Monster> monsterList;
+    private DataSinglet data;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d("***** ps3", "in onCreate, before executing async task..");
+        setContentView(R.layout.activity_plan_step3b);
+        ListView lv = (ListView) findViewById(R.id.mon_lv_ps3b);
 
-        DataSinglet data = DataSinglet.getInstance();
+        data = DataSinglet.getInstance();
         if (data.hasList()) {
             Log.d("***** ps3", "using existing list from datasinglet");
             monsterList = data.getMonsterList();
             MonArrayAdapter adapter = new MonArrayAdapter(this, monsterList);
-            setListAdapter(adapter);
+            //setListAdapter(adapter);  //
+            lv.setAdapter(adapter);
             data.setSubscriber(adapter);
+            setupClicks(lv);
         }
         else new getMonAsync().execute(this);
 
-    }
-
-    //TODO this can probably be removed
-    @Override
-    protected void onResume() {
-        Log.d("planstep3", "onresume");
-        super.onResume();
-        DataSinglet data = DataSinglet.getInstance();
-        if (data.wasListChanged()) {
-            MonArrayAdapter a = (MonArrayAdapter) getListAdapter();
-            Log.d("planstep3", "list has this many monsters on resume: " + a.monsters.size());
+        if (data.isLoggedIn()){
+            String user = data.getUser();
+            if (data.isFirstLogin())
+                Toast.makeText(this, "Logged in as " + user, Toast.LENGTH_SHORT).show();
         }
     }
 
-    @Override
-    protected void onListItemClick(ListView l, View v, int position, long id) {
-        //super.onListItemClick(l, v, position, id);
-        DataSinglet.getInstance().select(position);
-        Intent intent = new Intent(this, MonDetailView.class);
 
+    private void setupClicks(ListView lv){
+        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                DataSinglet.getInstance().select(position);
+                Intent intent = new Intent(PlanStep3.this, MonDetailView.class);
+                startActivity(intent);
+            }
+        });
+    }
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_plan_step3b, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        switch (id) {
+            case R.id.action_settings:
+                return true;
+            case R.id.new_monster:
+                newMonIntent();
+                return false;
+            case R.id.switch_acct:
+                switchAcct();
+                return false;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void switchAcct() {
+        //TODO double-check that logOut() does the right thing
+        data.logOut();
+        //will this show?
+        Toast.makeText(getApplicationContext(), "logged out", Toast.LENGTH_LONG).show();
+        NavUtils.navigateUpFromSameTask(this);
+    }
+
+    private void newMonIntent() {
+        Intent intent = new Intent(this, NewMonster.class);
         startActivity(intent);
     }
 
@@ -75,14 +126,20 @@ public class PlanStep3 extends ListActivity {
 
         protected void onPostExecute(List<Monster> monList) {
             Log.d("***** ps3", "in postExecute handler");
-            monsterList = monList;
-            Log.d("planstep3", "list has this many monsters: " + monList.size());
+            if (monList != null)
+                monsterList = monList;
+            else
+                monsterList = new ArrayList<Monster>();
+            Log.d("***** planstep3", "list has this many monsters: " + monsterList.size());
             DataSinglet data = DataSinglet.getInstance();
             data.setMonsterList(monsterList);
 
             MonArrayAdapter adapter = new MonArrayAdapter(this.theContext, monsterList);
-            setListAdapter(adapter);
+            ListView lv = (ListView) findViewById(R.id.mon_lv_ps3b);
+            lv.setAdapter(adapter);
+            //setListAdapter(adapter); //
             data.setSubscriber(adapter);
+            setupClicks(lv);
         }
     }
 

@@ -38,6 +38,10 @@ public class OauthTest extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_oauth_test);
+
+        Log.d("***** oauthtest", "hello!");
+
+        findViewById(R.id.sign_in_button).setOnClickListener(new Clicky());
     }
 
 
@@ -68,35 +72,35 @@ public class OauthTest extends ActionBarActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Log.d("oauthtest", "onactivityresult");
-        Log.d("oauthtest", ""+requestCode);
+        Log.d("***** oauthtest", "onactivityresult");
+        Log.d("***** oauthtest", ""+requestCode);
         if (requestCode == REQUEST_CODE_PICK_ACCOUNT) {
             // Receiving a result from the AccountPicker
             if (resultCode == RESULT_OK) {
-                Log.d("oauthtest", "ok result");
+                Log.d("***** oauthtest", "ok result");
                 mEmail = data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME);
                 String typ = data.getStringExtra(AccountManager.KEY_ACCOUNT_TYPE);
                 Account account = new Account(mEmail, typ);
-                Log.d("oauthtest", "mEmail value: " + mEmail);
+                Log.d("***** oauthtest", "mEmail value: " + mEmail);
                 // With the account name acquired, go get the auth token
                 AccountManager accountManager = AccountManager.get(getApplicationContext());
                 accountManager.getAuthToken(account, "ah", false, new GetAuthTokenCallback(), null);
 
                 //new GetUsernameTask(this, mEmail, "oauth2:https://www.googleapis.com/auth/userinfo.profile ").execute();
             } else if (resultCode == RESULT_CANCELED) {
-                Log.d("oauthtest", "cancelled");
+                Log.d("***** oauthtest", "cancelled");
                 // The account picker dialog closed without selecting an account.
                 // Notify users that they must pick an account to proceed.
                 Toast.makeText(this, "you shoulda picked an account", Toast.LENGTH_SHORT).show();
             }
         }
         // Later, more code will go here to handle the result from some exceptions...
-        Log.d("oauthtest", "onactivityresult end");
+        Log.d("***** oauthtest", "onactivityresult end");
     }
 
     private class GetAuthTokenCallback implements AccountManagerCallback {
         public void run(AccountManagerFuture result) {
-            Log.d("oauthtest", "getAuthTokenCAllback");
+            Log.d("***** oauthtest", "getAuthTokenCAllback");
             Bundle bundle;
             try {
                 bundle = (Bundle) result.getResult();
@@ -105,46 +109,54 @@ public class OauthTest extends ActionBarActivity {
                     // User input required
                     startActivity(intent);
                 } else {
-                    Log.d("oauthtest", "got an auth token? the accountmanager way");
+                    Log.d("***** oauthtest", "got an auth token? the accountmanager way");
                     onGetAuthToken(bundle);
                 }
             } catch (OperationCanceledException e) {
                 e.printStackTrace();
-                Log.d("oauthtest", "op cancelled exception " + e.getMessage());
+                Log.d("***** oauthtest", "op cancelled exception " + e.getMessage());
             } catch (AuthenticatorException e) {
                 e.printStackTrace();
-                Log.d("oauthtest", "auth exception " + e.getMessage());
+                Log.d("***** oauthtest", "auth exception " + e.getMessage());
             } catch (IOException e) {
                 e.printStackTrace();
-                Log.d("oauthtest", "IO exception " + e.getMessage());
+                Log.d("***** oauthtest", "IO exception " + e.getMessage());
             }
         }
     }
 
     protected void onGetAuthToken(Bundle bundle) {
-        Log.d("oauthtest", "onGetAuthToken");
+        Log.d("***** oauthtest", "onGetAuthToken");
         String auth_token = bundle.getString(AccountManager.KEY_AUTHTOKEN);
         new GetCookieTask().execute(auth_token);
     }
 
     //https://developer.android.com/google/auth/http-auth.html
     private void pickUserAccount() {
-        Log.d("oauthtest", "start pickuseraccount");
+        Log.d("***** oauthtest", "start pickuseraccount");
         String[] accountTypes = new String[]{"com.google"};
         Intent intent = AccountPicker.newChooseAccountIntent(null, null,
                 accountTypes, false, null, null, null, null);
         startActivityForResult(intent, REQUEST_CODE_PICK_ACCOUNT);
     }
 
+    //TODO take this out? redundant?
     public void doLogin(View view) {
-        Log.d("oauthtest", "button clicked");
+        Log.d("***** oauthtest", "plain button clicked");
         pickUserAccount();
+    }
+
+    private class Clicky implements View.OnClickListener {
+        public void onClick(View view) {
+            Log.d("***** oauthtest", "g+ signin button clicked");
+            pickUserAccount();
+        }
     }
 
     //http://blog.notdot.net/2010/05/Authenticating-against-App-Engine-from-an-Android-app
     private class GetCookieTask extends AsyncTask<String, Void, Boolean> {
         protected Boolean doInBackground(String... tokens) {
-            Log.d("oauthtest", "trying to get cookie...");
+            Log.d("***** oauthtest", "trying to get cookie...");
             DefaultHttpClient http_client = new DefaultHttpClient();
             try {
                 // Don't follow redirects
@@ -153,29 +165,29 @@ public class OauthTest extends ActionBarActivity {
                 HttpGet http_get = new HttpGet("http://monspotting.appspot.com/_ah/login?continue=http://localhost/&auth=" + tokens[0]);
                 HttpResponse response;
                 response = http_client.execute(http_get);
-                Log.d("oauthtest", "status code was " + response.getStatusLine().getStatusCode());
+                Log.d("***** oauthtest", "status code was " + response.getStatusLine().getStatusCode());
 
                 if(response.getStatusLine().getStatusCode() != 302) {
                     // Response should be a redirect
-                    Log.d("oauthtest", "response was not a redirect");
+                    Log.d("***** oauthtest", "response was not a redirect");
                     return false;
                 }
 
                 for(Cookie cookie : http_client.getCookieStore().getCookies()) {
                     if(cookie.getName().equals("ACSID")) {
-                        Log.d("oauthtest", "got a cookie!");
-                        Log.d("oauthtest", cookie.toString());
+                        Log.d("***** oauthtest", "got a cookie!");
+                        Log.d("***** oauthtest", cookie.toString());
                         String cookie_str = cookie.getName() + "=" + cookie.getValue();
-                        Log.d("oauthtest", "cookie_str: " + cookie_str);
-                        DataSinglet.getInstance().logIn(cookie_str);
+                        Log.d("***** oauthtest", "cookie_str: " + cookie_str);
+                        DataSinglet.getInstance().logIn(cookie_str, mEmail);
                         return true;
                     }
                 }
             } catch (ClientProtocolException e) {
-                Log.d("oauthtest", "client Protocol exception " + e.getMessage());
+                Log.d("***** oauthtest", "client Protocol exception " + e.getMessage());
                 e.printStackTrace();
             } catch (IOException e) {
-                Log.d("oauthtest", "IO exception " + e.getMessage());
+                Log.d("***** oauthtest", "IO exception " + e.getMessage());
                 e.printStackTrace();
             } finally {
                 http_client.getParams().setBooleanParameter(ClientPNames.HANDLE_REDIRECTS, true);
@@ -184,15 +196,15 @@ public class OauthTest extends ActionBarActivity {
         }
 
         protected void onPostExecute(Boolean result) {
-            //start next activity here?
-            Intent intent = new Intent(getBaseContext(), NewMonster.class);
-            Log.d("oauthtest", "sending intent to switch to PlanStep3b");
+            //Go to main activity
+            Intent intent = new Intent(getBaseContext(), PlanStep3.class);
+            Log.d("***** oauthtest", "sending intent to switch to PlanStep3b");
             startActivity(intent);
         }
     }
 
 
-    //rename this
+    //TODO remove this?
     public class GetUsernameTask extends AsyncTask {
         Activity mActivity;
         String mScope;
@@ -210,14 +222,14 @@ public class OauthTest extends ActionBarActivity {
          */
         @Override
         protected Object doInBackground(Object... params) {
-            Log.d("oauthtest", "doInBackground");
+            Log.d("***** oauthtest", "doInBackground");
             try {
                 String token = fetchTokenNoCatch();
-                Log.d("oauthtest", "fetchtoken returned");
+                Log.d("***** oauthtest", "fetchtoken returned");
                 if (token != null) {
                     // Insert the good stuff here.
                     // Use the token to access the user's Google data.
-                    Log.d("oauthtest", "the token is: " + token);
+                    Log.d("***** oauthtest", "the token is: " + token);
 
                     new GetCookieTask().execute(token);
                     //we want to save the cookie, not the token
@@ -231,8 +243,8 @@ public class OauthTest extends ActionBarActivity {
                 // The fetchToken() method handles Google-specific exceptions,
                 // so this indicates something went wrong at a higher level.
                 // TIP: Check for network connectivity before starting the AsyncTask.
-                Log.d("oauthtest", "exception after fetchToken?");
-                Log.d("oauthtest", e.getMessage());
+                Log.d("***** oauthtest", "exception after fetchToken?");
+                Log.d("***** oauthtest", e.getMessage());
             }
             return null;
         }
@@ -240,22 +252,22 @@ public class OauthTest extends ActionBarActivity {
 
         //ha ha nice try -- catching is mandatory
         protected String fetchTokenNoCatch() throws IOException {
-            Log.d("oauthtest", "fetchtoken");
+            Log.d("***** oauthtest", "fetchtoken");
             try {
                 return GoogleAuthUtil.getToken(mActivity, mEmail, mScope);
             } catch (UserRecoverableAuthException userRecoverableException) {
                 // GooglePlayServices.apk is either old, disabled, or not present
                 // so we need to show the user some UI in the activity to recover.
                 //mActivity.handleException(userRecoverableException);
-                Log.d("oauthtest", "userRecoverableException");
-                Log.d("oauthtest", userRecoverableException.getMessage());
-                Log.d("oauthtest", "starting activity again...");
+                Log.d("***** oauthtest", "userRecoverableException");
+                Log.d("***** oauthtest", userRecoverableException.getMessage());
+                Log.d("***** oauthtest", "starting activity again...");
                 startActivityForResult(userRecoverableException.getIntent(), REQUEST_CODE_PICK_ACCOUNT);
             } catch (GoogleAuthException fatalException) {
                 // Some other type of unrecoverable exception has occurred.
                 // Report and log the error as appropriate for your app.
-                Log.d("oauthtest", "fatalexception");
-                Log.d("oauthtest", fatalException.getMessage());
+                Log.d("***** oauthtest", "fatalexception");
+                Log.d("***** oauthtest", fatalException.getMessage());
             }
             return null;
         }

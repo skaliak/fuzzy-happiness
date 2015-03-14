@@ -4,9 +4,11 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.NumberPicker;
 import android.widget.Toast;
 
 
@@ -16,6 +18,10 @@ public class Sandbox extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sandbox);
+
+        NumberPicker np = (NumberPicker) findViewById(R.id.numberPicker);
+        np.setMaxValue(100);
+        np.setMinValue(0);
     }
 
 
@@ -42,15 +48,22 @@ public class Sandbox extends ActionBarActivity {
     }
 
     public void testSomething(View view) {
-        new AlertDialog.Builder(this)
-                //.setTitle("Titel")
-                .setMessage("Do you really want to whatever?")
-                //.setIcon(android.R.drawable.ic_dialog_alert)
-                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+//        new AlertDialog.Builder(this)
+//                //.setTitle("Titel")
+//                .setMessage("Do you really want to whatever?")
+//                //.setIcon(android.R.drawable.ic_dialog_alert)
+//                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+//
+//                    public void onClick(DialogInterface dialog, int whichButton) {
+//                        Toast.makeText(Sandbox.this, "Yaay", Toast.LENGTH_SHORT).show();
+//                    }})
+//                .setNegativeButton(android.R.string.no, null).show();
 
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                        Toast.makeText(Sandbox.this, "Yaay", Toast.LENGTH_SHORT).show();
-                    }})
-                .setNegativeButton(android.R.string.no, null).show();
+        NumberPicker p = (NumberPicker) findViewById(R.id.numberPicker);
+        int i = p.getValue();
+
+        Toast t = Toast.makeText(getApplicationContext(), "boo!", Toast.LENGTH_LONG);
+        t.setGravity(Gravity.TOP, 0, i);
+        t.show();
     }
 }

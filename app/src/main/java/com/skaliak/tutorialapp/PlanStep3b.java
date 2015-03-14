@@ -1,5 +1,6 @@
 package com.skaliak.tutorialapp;
 
+import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -22,8 +23,8 @@ public class PlanStep3b extends ActionBarActivity {
         final String[] monArray = {"one", "two", "three"};
 
         if(DataSinglet.getInstance().isLoggedIn()) {
-            Log.d("PlanStep3b", "yes logged in");
-            Log.d("PlanStep3b", DataSinglet.getInstance().getCookie());
+            Log.d("***** PlanStep3b", "yes logged in");
+            Log.d("***** PlanStep3b", DataSinglet.getInstance().getCookie());
         }
 
         ListView lv = (ListView) findViewById(R.id.mon_lv_ps3b);
@@ -33,10 +34,10 @@ public class PlanStep3b extends ActionBarActivity {
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Log.d("a tag", "trying to make a toast...");
+                DataSinglet.getInstance().select(position);
+                Intent intent = new Intent(PlanStep3b.this, MonDetailView.class);
 
-                //this is your basic Toast
-                Toast.makeText(getApplicationContext(), monArray[position], Toast.LENGTH_LONG).show();
+                startActivity(intent);
             }
         });
     }

@@ -12,6 +12,8 @@ import android.widget.TextView;
 /**
  * Created by skaliak on 3/7/15.
  */
+
+//TODO delete this?
 public class TextFragment extends Fragment {
 
 
@@ -27,7 +29,7 @@ public class TextFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        Log.d("TextFragment", "********In onActivityCreated********");
+        Log.d("***** TextFragment", "********In onActivityCreated********");
 
         View view = getView();
         if (view != null) {
@@ -35,7 +37,7 @@ public class TextFragment extends Fragment {
             Bundle args = getArguments();
             tv.setText((String) args.get("text"));
         } else
-            Log.d("TextFragment", "getView returned null!!!!");
+            Log.d("***** TextFragment", "getView returned null!!!!");
 
     }
 }

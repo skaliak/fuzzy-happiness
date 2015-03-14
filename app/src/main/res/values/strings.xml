@@ -12,7 +12,7 @@
     <string name="title_activity_frag_activity_first">FragActivityFirst</string>
     <string name="title_activity_plan_step1">PlanStep1</string>
     <string name="title_activity_plan_step2">PlanStep2</string>
-    <string name="title_activity_plan_step3">PlanStep3</string>
+    <string name="title_activity_plan_step3">Monster List</string>
     <string name="title_activity_mon_detail_view">MonDetailView</string>
     <string name="title_activity_plan_step3b">PlanStep3b</string>
     <string name="title_activity_oauth_test">OauthTest</string>

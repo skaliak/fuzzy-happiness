@@ -9,11 +9,13 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.skaliak.MonSightingClient;
 import com.skaliak.MonSightingClient.*;
@@ -37,7 +39,9 @@ public class MapsActivity extends ActionBarActivity {
 
         currentMonster = DataSinglet.getInstance().getSelected();
         if (currentMonster == null)
-            Log.d("MapsActivity", "null currentmonster in oncreate");
+            Log.d("***** MapsActivity", "null currentmonster in oncreate");
+        else
+            setTitle(currentMonster.name + " sightings");
 
         //do this last, you dumbass
         setUpMapIfNeeded();
@@ -77,7 +81,6 @@ public class MapsActivity extends ActionBarActivity {
     }
 
     private void newSighting() {
-        //TODO test this
         //sighting marker is created in current map center (camera target)
         LatLng pos = mMap.getCameraPosition().target;
         Date now = new Date();
@@ -126,7 +129,7 @@ public class MapsActivity extends ActionBarActivity {
      * This should only be called once and when we are sure that {@link #mMap} is not null.
      */
     private void setUpMap() {
-        Log.d("MapsActivity", "in setupmap");
+        Log.d("***** MapsActivity", "in setupmap");
         mMap.setMyLocationEnabled(true);
         //mMap.addMarker(new MarkerOptions().position(new LatLng(0, 0)).title("Marker"));
         //add all markers here (execute async task)
@@ -135,17 +138,18 @@ public class MapsActivity extends ActionBarActivity {
         if (currentMonster != null) {
             String key = currentMonster.encoded_key;
             if (key != null) {
+                Log.d("***** MapsActivity", "getting sightings of " + currentMonster.name);
                 new GetSightingsAsync().execute(currentMonster.encoded_key);
             } else {
-                Log.d("MapsActivity", "null key from currentmonster, can't lookup sightings");
+                Log.d("***** MapsActivity", "null key from currentmonster, can't lookup sightings");
             }
         } else {
-            Log.d("MapsActivity", "currentmonster was null in setupmap??");
+            Log.d("***** MapsActivity", "currentmonster was null in setupmap??");
         }
     }
 
     public LatLng addMarker(MonSightingClient.Sighting s){
-        Log.d("MapsActivity", "adding a marker for a sighting");
+        Log.d("***** MapsActivity", "adding a marker for a sighting");
         LatLng loc = new LatLng(s.lat, s.lng);
         MarkerOptions opt = new MarkerOptions()
                 .position(loc)
@@ -160,9 +164,17 @@ public class MapsActivity extends ActionBarActivity {
         protected Void doInBackground(Sighting... s) {
             //TODO add some error checking here?
             String key = currentMonster.encoded_key;
+
+            //uncomment next line to enable retrofit debugging
+            //client = MonSightingClient.GetClient(true);
             client.new_sighting(key, s[0]);
 
             return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            Toast.makeText(getApplicationContext(), "saved", Toast.LENGTH_LONG).show();
         }
     }
 
@@ -170,25 +182,36 @@ public class MapsActivity extends ActionBarActivity {
         @Override
         protected Void doInBackground(String... keys) {
 
+
             sightings = client.sightings_of_monster(keys[0]);
-            Log.d("MapsActivity", "got this many sightings: " + sightings.size());
+            if (sightings != null)
+                Log.d("***** MapsActivity", "got this many sightings: " + sightings.size());
+            else
+                Log.d("***** MapsActivity", "no sightings returned");
             return null;
         }
 
         @Override
         protected void onPostExecute(Void aVoid) {
 
-            //default location
+            //default location (PDX)
             LatLng loc = new LatLng(45.5, -122.5);
 
-            //add marker for each sighting
-            for(Sighting s : sightings) {
-                loc = addMarker(s);
+
+            if (sightings != null) {
+                LatLngBounds.Builder builder = LatLngBounds.builder();
+                //add marker for each sighting
+                for (Sighting s : sightings) {
+                    loc = addMarker(s);
+                    builder = builder.include(loc);
+                }
+                LatLngBounds bounds = builder.build();
+
+                //center map on sightings
+                mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 0));
             }
 
-            //center map on sightings?
-            //get pos of last sighting and center on that?
-            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(loc, 10));
+            //mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(loc, 10));
         }
     }
 }

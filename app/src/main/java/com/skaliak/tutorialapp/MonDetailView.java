@@ -45,6 +45,7 @@ public class MonDetailView extends ActionBarActivity {
         TextView tv_cb = (TextView) findViewById(R.id.mon_created_by);
         ImageView iv = (ImageView) findViewById(R.id.mon_portrait);
 
+
         tv_desc.setText(desc);
         tv_name.setText(name);
 
@@ -94,7 +95,7 @@ public class MonDetailView extends ActionBarActivity {
         //remove monster from local list (done by callback)
         //then show toast message
         //then navigate UP
-        Log.d("mondetailview", "attempting to delete monster async");
+        Log.d("***** mondetailview", "attempting to delete monster async");
         GenericCallback cb = new DelMonCallback(this);
         String key = currentMon.encoded_key;
         client.delete_monster_async(key, cb);
@@ -114,14 +115,16 @@ public class MonDetailView extends ActionBarActivity {
     }
 
     public void editMonster() {
-        //TODO start new activity or switch this one into edit mode somehow?
-        Log.d("mondetailview", "edit clicked");
+        Log.d("***** mondetailview", "edit clicked");
 
+        //use ACTION_EDIT to tell NewMonster that we're editing
+        Intent intent = new Intent(Intent.ACTION_EDIT, null, this, NewMonster.class);
+        startActivity(intent);
     }
 
     public void viewSightings() {
         //start new activity to view sightings on a map
-        Log.d("mondetailview", "sightings clicked");
+        Log.d("***** mondetailview", "sightings clicked");
         Intent intent = new Intent(this, MapsActivity.class);
         startActivity(intent);
     }

@@ -15,6 +15,7 @@ import retrofit.Callback;
 import retrofit.RequestInterceptor;
 import retrofit.RestAdapter;
 import retrofit.RetrofitError;
+import retrofit.android.AndroidLog;
 import retrofit.client.Response;
 import retrofit.http.*;
 import retrofit.converter.GsonConverter;
@@ -112,7 +113,6 @@ public class MonSightingClient {
         void delete_sighting(@Path("id") String id, Callback<Void> cb);
     }
 
-    //TODO put some toast messages here
     public static class GenericCallback implements Callback<Void> {
 
         private Context context;
@@ -123,7 +123,7 @@ public class MonSightingClient {
 
         @Override
         public void success(Void aVoid, Response response) {
-            Log.d("genericcallback", "success");
+            Log.d("***** genericcallback", "success");
             Toast toast = Toast.makeText(context, "operation succeeded", Toast.LENGTH_LONG);
             //toast.setGravity(Gravity.TOP, 0, 0);
             toast.show();
@@ -132,7 +132,7 @@ public class MonSightingClient {
 
         @Override
         public void failure(RetrofitError error) {
-            Log.d("genericcallback", "fail");
+            Log.d("***** genericcallback", "fail");
             Toast toast = Toast.makeText(context, error.getMessage(), Toast.LENGTH_LONG);
             //toast.setGravity(Gravity.TOP, 0, 0);
             toast.show();
@@ -171,13 +171,23 @@ public class MonSightingClient {
             }
         };
 
-        RestAdapter restAdapter = new RestAdapter.Builder()
-                .setEndpoint(API_URL)
-                .setRequestInterceptor(requestInterceptor)
-                .setConverter(new GsonConverter(gson))
-                .build();
+        RestAdapter restAdapter;
 
-        if (dbg) restAdapter.setLogLevel(RestAdapter.LogLevel.FULL);
+        if (dbg) {
+            restAdapter = new RestAdapter.Builder()
+                    .setEndpoint(API_URL)
+                    .setRequestInterceptor(requestInterceptor)
+                    .setConverter(new GsonConverter(gson))
+                    .setLogLevel(RestAdapter.LogLevel.FULL)
+                    .setLog(new AndroidLog("retrofit"))
+                    .build();
+        } else {
+            restAdapter = new RestAdapter.Builder()
+                    .setEndpoint(API_URL)
+                    .setRequestInterceptor(requestInterceptor)
+                    .setConverter(new GsonConverter(gson))
+                    .build();
+        }
 
         MonSpottingApi client = restAdapter.create(MonSpottingApi.class);
 

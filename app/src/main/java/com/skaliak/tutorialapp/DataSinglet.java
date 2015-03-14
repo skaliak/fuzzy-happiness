@@ -30,11 +30,13 @@ public class DataSinglet {
     private int selected;
     private boolean list_changed;
     private ArrayAdapter subscriber;
+    private String userid;
+    private boolean firstLogin;
 
     public void setMonsterList(List<Monster> incoming_list){
-        Log.d("datasinglet", "setting monsterlist");
+        Log.d("***** datasinglet", "setting monsterlist");
         if (monsterList != null)
-            Log.d("datasinglet", "monsterlist was not null!");
+            Log.d("***** datasinglet", "monsterlist was not null!");
         monsterList = incoming_list;
         selected = 0;
         list_changed = false;
@@ -45,11 +47,14 @@ public class DataSinglet {
     public boolean isLoggedIn() {
         return logged_in;
     }
-    public void logIn(String t) {
+    public void logIn(String t, String u) {
         logged_in = true;
+        firstLogin = true;
+        userid = u;
         cookie = t;
     }
     public void logOut() {
+        Log.d("***** datasinglet", "logged out");
         logged_in = false;
         monsterList = null;
         selected = 0;
@@ -86,7 +91,7 @@ public class DataSinglet {
         if (monsterList != null && monsterList.size() > 0) {
             m = monsterList.get(selected);
         } else {
-            Log.d("DataSinglet", "getselected creating new empty Monster (monsterlist was null or empty?)");
+            Log.d("***** DataSinglet", "getselected creating new empty Monster (monsterlist was null or empty?)");
             m = new Monster();
         }
 
@@ -95,17 +100,34 @@ public class DataSinglet {
 
     public void addMonster(Monster m) {
         monsterList.add(m);
-        Log.d("datasinglet", "adding monster");
+        Log.d("***** datasinglet", "adding monster");
+        if (subscriber != null) {
+            Log.d("***** datasinglet", "notifying subscribed adapter");
+            subscriber.notifyDataSetChanged();
+        }
+    }
+
+    public String getUser() {
+        return userid;
     }
 
     public void removeSelected() {
-        Log.d("datasinglet", "removing selected monster");
+        Log.d("***** datasinglet", "removing selected monster");
         monsterList.remove(selected);
         selected = 0;
         list_changed = true;
         if (subscriber != null) {
-            Log.d("datasinglet", "notifying subscribed adapter");
+            Log.d("***** datasinglet", "notifying subscribed adapter");
             subscriber.notifyDataSetChanged();
         }
+    }
+
+    //feels like a hack :(
+    public boolean isFirstLogin() {
+        if (firstLogin) {
+            firstLogin = false;
+            return true;
+        }
+        return false;
     }
 }

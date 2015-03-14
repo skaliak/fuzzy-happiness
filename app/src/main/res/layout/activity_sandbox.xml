@@ -13,6 +13,14 @@
         android:layout_height="131dp"
         android:textSize="40dp"
         android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"
+        android:id="@+id/button" />
+
+    <NumberPicker
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/numberPicker"
+        android:layout_above="@+id/button"
         android:layout_centerHorizontal="true" />
 
 </RelativeLayout>

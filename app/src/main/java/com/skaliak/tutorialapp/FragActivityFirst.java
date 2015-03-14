@@ -39,7 +39,7 @@ public class FragActivityFirst extends FragmentActivity {
             }
         }
 
-        Log.d("FragActivityFirst", "End of onCreate");
+        Log.d("***** FragActivityFirst", "End of onCreate");
     }
 
 
