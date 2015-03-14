@@ -208,7 +208,7 @@ public class MapsActivity extends ActionBarActivity {
                 LatLngBounds bounds = builder.build();
 
                 //center map on sightings
-                mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 0));
+                mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 50));
             }
 
             //mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(loc, 10));

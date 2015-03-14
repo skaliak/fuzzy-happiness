@@ -166,7 +166,7 @@ public class PlanStep3 extends ActionBarActivity {
             ImageView img = (ImageView) monView.findViewById(R.id.mon_icon);
 
             //TODO use actual image in listview instead of generic icon?
-            img.setImageResource(R.drawable.mmm_icon);
+            img.setImageResource(R.drawable.frank_sq);
 
             tv.setText(monsters.get(position).name);
 

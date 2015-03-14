@@ -8,6 +8,7 @@ import android.accounts.OperationCanceledException;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -42,6 +43,12 @@ public class OauthTest extends ActionBarActivity {
         Log.d("***** oauthtest", "hello!");
 
         findViewById(R.id.sign_in_button).setOnClickListener(new Clicky());
+
+        ActionBar ab = getSupportActionBar();
+        if (ab != null)
+            ab.hide();
+        else
+            Log.d("***** oauthtest", "getsupportactionbar returned null");
     }
 
 
@@ -110,7 +117,9 @@ public class OauthTest extends ActionBarActivity {
                     startActivity(intent);
                 } else {
                     Log.d("***** oauthtest", "got an auth token? the accountmanager way");
-                    onGetAuthToken(bundle);
+                    //onGetAuthToken(bundle);
+                    String auth_token = bundle.getString(AccountManager.KEY_AUTHTOKEN);
+                    new GetCookieTask().execute(auth_token);
                 }
             } catch (OperationCanceledException e) {
                 e.printStackTrace();
@@ -125,6 +134,7 @@ public class OauthTest extends ActionBarActivity {
         }
     }
 
+    //this gets called by GetAuthTokenCallback (refactored)
     protected void onGetAuthToken(Bundle bundle) {
         Log.d("***** oauthtest", "onGetAuthToken");
         String auth_token = bundle.getString(AccountManager.KEY_AUTHTOKEN);
@@ -146,6 +156,7 @@ public class OauthTest extends ActionBarActivity {
         pickUserAccount();
     }
 
+    //clickhandler for google signin button
     private class Clicky implements View.OnClickListener {
         public void onClick(View view) {
             Log.d("***** oauthtest", "g+ signin button clicked");
@@ -176,7 +187,7 @@ public class OauthTest extends ActionBarActivity {
                 for(Cookie cookie : http_client.getCookieStore().getCookies()) {
                     if(cookie.getName().equals("ACSID")) {
                         Log.d("***** oauthtest", "got a cookie!");
-                        Log.d("***** oauthtest", cookie.toString());
+                        //Log.d("***** oauthtest", cookie.toString());
                         String cookie_str = cookie.getName() + "=" + cookie.getValue();
                         Log.d("***** oauthtest", "cookie_str: " + cookie_str);
                         DataSinglet.getInstance().logIn(cookie_str, mEmail);
@@ -227,17 +238,9 @@ public class OauthTest extends ActionBarActivity {
                 String token = fetchTokenNoCatch();
                 Log.d("***** oauthtest", "fetchtoken returned");
                 if (token != null) {
-                    // Insert the good stuff here.
-                    // Use the token to access the user's Google data.
                     Log.d("***** oauthtest", "the token is: " + token);
 
                     new GetCookieTask().execute(token);
-                    //we want to save the cookie, not the token
-                    //DataSinglet.getInstance().logIn(token);
-
-//                    Intent intent = new Intent(getBaseContext(), NewMonster.class);
-//                    Log.d("oauthtest", "sending intent to switch to PlanStep3b");
-//                    startActivity(intent);
                 }
             } catch (IOException e) {
                 // The fetchToken() method handles Google-specific exceptions,

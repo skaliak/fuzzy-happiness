@@ -2,8 +2,10 @@ package com.skaliak.tutorialapp;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -22,6 +24,16 @@ public class Sandbox extends ActionBarActivity {
         NumberPicker np = (NumberPicker) findViewById(R.id.numberPicker);
         np.setMaxValue(100);
         np.setMinValue(0);
+
+        SharedPreferences pref = getPreferences(MODE_PRIVATE);
+        String msg = pref.getString("my_secret_string", "empty");
+        if (msg != null)
+            Log.d("***** sandbox", "msg was " + msg);
+
+        SharedPreferences.Editor editor = pref.edit();
+        editor.putString("my_secret_string", "heyyyoooo!");
+
+        editor.apply();
     }
 
 

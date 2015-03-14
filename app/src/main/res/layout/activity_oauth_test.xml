@@ -3,6 +3,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context="com.skaliak.tutorialapp.OauthTest"
+    android:background="@drawable/green_grad"
     android:weightSum="1">
 
 
@@ -12,18 +13,24 @@
         android:layout_height="wrap_content"
         android:padding="30px" />
 
-    <!--<Button-->
-        <!--android:onClick="doLogin"-->
-        <!--android:text="login"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:layout_gravity="center_horizontal" />-->
-
     <com.google.android.gms.common.SignInButton
         android:id="@+id/sign_in_button"
-        android:onClick="doLogin"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal" />
+
+    <!--this is for spacing-->
+    <TextView
+        android:layout_weight="1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:text="By Peter Lindberg, 2015"
+        android:textSize="25px"
+        android:padding="15px"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
 
 </LinearLayout>
