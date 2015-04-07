@@ -137,7 +137,6 @@ public class PlanStep3 extends ActionBarActivity {
             MonArrayAdapter adapter = new MonArrayAdapter(this.theContext, monsterList);
             ListView lv = (ListView) findViewById(R.id.mon_lv_ps3b);
             lv.setAdapter(adapter);
-            //setListAdapter(adapter); //
             data.setSubscriber(adapter);
             setupClicks(lv);
         }

@@ -181,8 +181,6 @@ public class MapsActivity extends ActionBarActivity {
     private class GetSightingsAsync extends AsyncTask<String, Void, Void> {
         @Override
         protected Void doInBackground(String... keys) {
-
-
             sightings = client.sightings_of_monster(keys[0]);
             if (sightings != null)
                 Log.d("***** MapsActivity", "got this many sightings: " + sightings.size());
@@ -193,10 +191,8 @@ public class MapsActivity extends ActionBarActivity {
 
         @Override
         protected void onPostExecute(Void aVoid) {
-
             //default location (PDX)
             LatLng loc = new LatLng(45.5, -122.5);
-
 
             if (sightings != null) {
                 LatLngBounds.Builder builder = LatLngBounds.builder();
@@ -210,8 +206,6 @@ public class MapsActivity extends ActionBarActivity {
                 //center map on sightings
                 mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 50));
             }
-
-            //mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(loc, 10));
         }
     }
 }
